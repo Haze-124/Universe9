@@ -71,7 +71,7 @@ def un_cube_plot():
             imgplot = axes[2][1].imshow(img_cropped) # image needs to go at the bottom
         else:
             imgplot = axes[1][i].imshow(img_cropped) # put the image in the middle row at the correct column
-    #plt.show()
+    plt.show()
     return plt
 
 def un_cube_stars():
@@ -102,7 +102,7 @@ def un_cube_stars():
     ax.set_xlim(0, 360)
     ax.set_ylim(0, 180)
     ax.invert_yaxis()
-    plt.show()
+    #plt.show()
     all_stardata.to_csv(datapath + "/Converted_Star_Data.csv", index=False, sep=',') # Save data to csv file
     # dont want to save the 'indices' of the data, and I want a space character to separate the data
 
