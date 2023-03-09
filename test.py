@@ -54,7 +54,6 @@ def plot_HR_diagram(galaxy):
     plt.xlabel('Log Flux 2 - Log Flux 0')
     plt.show()
     print('Parallaxes: mean %.3f, sd %.3f' % (np.mean(galaxy['Parallax']),np.std(galaxy['Parallax'])))
-    return m0, m1, m2, colour
 
 def plot_HR_diagram_for_nearby_stars():
     current_dir = os.getcwd()
@@ -83,7 +82,9 @@ def plot_HR_diagram_for_nearby_stars():
     plt.show()
     return all_stars
 
-def plot_Benchmark_and_Cluster(all_stars, colour, m1):
+def plot_Benchmark_and_Cluster():
+    current_dir = os.getcwd()
+    all_stars = glob.glob(current_dir+'/data/*/Star_Data.csv')
     fig = plt.figure()
 
     for j, catalog in enumerate(all_stars):
@@ -103,6 +104,10 @@ def plot_Benchmark_and_Cluster(all_stars, colour, m1):
         except:
             pass
 
+    m0, m1, m2 = (np.log10(galaxy['BlueF']), 
+                np.log10(galaxy['GreenF']), 
+                np.log10(galaxy['RedF'])) 
+    colour = m2-m0
     s = plt.scatter(colour,m1+6.6,color='C0')
     plt.ylabel('Log Flux 1')
     plt.xlabel('Log Flux 2 - Log Flux 0')
@@ -114,9 +119,9 @@ plot_all_star_positions()
 centre = (10, 40) # Choose point to zoom in around
 zoom_in_distance=10
 galaxy = plot_zoom_in(centre, zoom_in_distance)
-m0, m1, m2, colour = plot_HR_diagram(galaxy)
-all_stars = plot_HR_diagram_for_nearby_stars()
-plot_Benchmark_and_Cluster(all_stars, colour, m1)
+#plot_HR_diagram(galaxy)
+plot_HR_diagram_for_nearby_stars() # includes all stars in the galaxy
+plot_Benchmark_and_Cluster()
 
 
 
