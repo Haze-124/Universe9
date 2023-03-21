@@ -102,7 +102,7 @@ def un_cube_stars():
     ax.set_xlim(0, 360)
     ax.set_ylim(0, 180)
     ax.invert_yaxis()
-    #plt.show()
+    plt.show()
     all_stardata.to_csv(datapath + "/Converted_Star_Data.csv", index=False, sep=',') # Save data to csv file
     # dont want to save the 'indices' of the data, and I want a space character to separate the data
 
@@ -143,6 +143,6 @@ def identify_galaies(data):
 def find_distances(galaxies):
     """ Returns distances to all input galaxies """
 
-#un_cube_stars()
+un_cube_stars()
 un_cube_galaxies()
 

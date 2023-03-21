@@ -23,7 +23,7 @@ warnings.filterwarnings('ignore')
 
 def load_data():
     current_dir = os.getcwd()
-    stars = pd.read_csv(str(current_dir)+'/data/Top/Star_Data.csv') 
+    stars = pd.read_csv(str(current_dir)+'/data/Right/Star_Data.csv') 
     print(stars.keys()) # this tells us what column names we have
     return stars
 
@@ -108,15 +108,15 @@ def plot_Benchmark_and_Cluster():
                 np.log10(galaxy['GreenF']), 
                 np.log10(galaxy['RedF'])) 
     colour = m2-m0
-    s = plt.scatter(colour,m1+6.6,color='C0')
+    s = plt.scatter(colour,m1+6.4,color='C0')
     plt.ylabel('Log Flux 1')
     plt.xlabel('Log Flux 2 - Log Flux 0')
     plt.legend([h,s],['Benchmark','Cluster'])
     plt.show()
 
 stars = load_data()
-plot_all_star_positions()
-centre = (10, 40) # Choose point to zoom in around
+#plot_all_star_positions()
+centre = (-0.5, 7.25) # Choose point to zoom in around
 zoom_in_distance=10
 galaxy = plot_zoom_in(centre, zoom_in_distance)
 #plot_HR_diagram(galaxy)
