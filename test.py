@@ -21,9 +21,10 @@ matplotlib.rcParams['savefig.dpi']= 300             #72
 import warnings
 warnings.filterwarnings('ignore')
 
-def load_data():
+def load_data(direction):
     current_dir = os.getcwd()
-    stars = pd.read_csv(str(current_dir)+'/data/Right/Star_Data.csv') 
+    #stars = pd.read_csv(str(current_dir)+'/data/Right/Star_Data.csv') 
+    stars = pd.read_csv(str(current_dir)+'/data/' + direction + '/Star_Data.csv') 
     print(stars.keys()) # this tells us what column names we have
     return stars
 
@@ -54,6 +55,7 @@ def plot_HR_diagram(galaxy):
     plt.xlabel('Log Flux 2 - Log Flux 0')
     plt.show()
     print('Parallaxes: mean %.3f, sd %.3f' % (np.mean(galaxy['Parallax']),np.std(galaxy['Parallax'])))
+    return max(m1)
 
 def plot_HR_diagram_for_nearby_stars():
     current_dir = os.getcwd()
@@ -82,11 +84,11 @@ def plot_HR_diagram_for_nearby_stars():
     plt.show()
     return all_stars
 
-def plot_Benchmark_and_Cluster():
+def plot_Benchmark_and_Cluster(max_cluster):
     current_dir = os.getcwd()
     all_stars = glob.glob(current_dir+'/data/*/Star_Data.csv')
     fig = plt.figure()
-
+    max_benchmark = -2000
     for j, catalog in enumerate(all_stars):
         try:
             this = pd.read_csv(catalog)
@@ -99,8 +101,9 @@ def plot_Benchmark_and_Cluster():
             dist = 1/thispar
             abs_mag = thism1 + 2*np.log10(dist) 
             mm = thispar>0.010 # only pick the ones with good signal-to-noise - 10 mas is ok 
-            
             h = plt.scatter(thiscolour[mm],abs_mag[mm],color='C1')
+            if max(abs_mag[mm]) > max_benchmark:
+                max_benchmark = max(abs_mag[mm])
         except:
             pass
 
@@ -108,20 +111,37 @@ def plot_Benchmark_and_Cluster():
                 np.log10(galaxy['GreenF']), 
                 np.log10(galaxy['RedF'])) 
     colour = m2-m0
-    s = plt.scatter(colour,m1+6.4,color='C0')
+    max_cluster = max(m1)
+    print(f"bench max = {max_benchmark}")
+    print(f"cluster max = {max_cluster}")
+    dist=max_cluster-max_benchmark
+    print(f"dist = {dist}")
+    #s = plt.scatter(colour,m1+np.log10(dist),color='C0')
+    s = plt.scatter(colour,m1-dist,color='C0')
     plt.ylabel('Log Flux 1')
     plt.xlabel('Log Flux 2 - Log Flux 0')
     plt.legend([h,s],['Benchmark','Cluster'])
     plt.show()
 
-stars = load_data()
-#plot_all_star_positions()
-centre = (-0.5, 7.25) # Choose point to zoom in around
+    return 10**abs(dist/2)
+
+
+# Identify each galaxy (clusters of stars) and return its center point
+# Then for each galaxy  
+    # Zoom into it
+    # Find its maximum value in log Flux 1 scale
+
+#plt.close('all')
+stars = load_data('Front')
+plot_all_star_positions()
+#centre = ( 0.6622, 0.2589) # Choose point to zoom in around
+centre = ( -4.3272, -1.0065) # Choose point to zoom in around
 zoom_in_distance=10
 galaxy = plot_zoom_in(centre, zoom_in_distance)
-#plot_HR_diagram(galaxy)
-plot_HR_diagram_for_nearby_stars() # includes all stars in the galaxy
-plot_Benchmark_and_Cluster()
+#max_cluster = plot_HR_diagram(galaxy)
+#plot_HR_diagram_for_nearby_stars() # includes all stars in the galaxy
+#dist_to_galaxy = plot_Benchmark_and_Cluster(max_cluster)
+#print(f"Distance to galaxy: {(int) (dist_to_galaxy)} pc")
 
 
 

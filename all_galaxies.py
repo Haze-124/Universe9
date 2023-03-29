@@ -137,7 +137,7 @@ def un_cube_galaxies():
     all_galaxdata.to_csv(datapath + "/Converted_Galaxy_Data.csv", index=False, sep=',') # Save data to csv file
     # dont want to save the 'indices' of the data, and I want a space character to separate the data
 
-def identify_galaies(data):
+def identify_galaxies(data):
     """ Returns all the galaxies in the input data """
 
 def find_distances(galaxies):
