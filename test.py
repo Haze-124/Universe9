@@ -132,15 +132,16 @@ def plot_Benchmark_and_Cluster(max_cluster):
     # Find its maximum value in log Flux 1 scale
 
 #plt.close('all')
-stars = load_data('Right')
+stars = load_data('Front')
 plot_all_star_positions()
-centre = (22.3940, 13.1841) # Choose point to zoom in around
+#centre = ( 0.6622, 0.2589) # Choose point to zoom in around
+centre = ( -4.3272, -1.0065) # Choose point to zoom in around
 zoom_in_distance=10
 galaxy = plot_zoom_in(centre, zoom_in_distance)
-max_cluster = plot_HR_diagram(galaxy)
-plot_HR_diagram_for_nearby_stars() # includes all stars in the galaxy
-dist_to_galaxy = plot_Benchmark_and_Cluster(max_cluster)
-print(f"Distance to galaxy: {(int) (dist_to_galaxy)} pc")
+#max_cluster = plot_HR_diagram(galaxy)
+#plot_HR_diagram_for_nearby_stars() # includes all stars in the galaxy
+#dist_to_galaxy = plot_Benchmark_and_Cluster(max_cluster)
+#print(f"Distance to galaxy: {(int) (dist_to_galaxy)} pc")
 
 
 
