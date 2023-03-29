@@ -10,32 +10,38 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot_Hubble(velocity, distance):
-    #plt.xlim([0,0.0003])
-    plt.plot(distance,velocity,'.',color='C2', label='Data')
-    A = np.vander(distance,2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
+    plt.xlim([0.8,1.4])
+    #velocity = [abs(v) for v in velocity]
+
+    plt.plot(np.log10(distance),velocity,'.',color='C2', label='Data')
+    A = np.vander(np.log10(distance),2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
     b, residuals, rank, s = np.linalg.lstsq(A,velocity, rcond=None)
     reconstructed = A @ b # @ is shorthand for matrix multiplication in python
-    plt.plot(distance,reconstructed,'-r',label='Slope')
+    print(f"b = {b}")
+    plt.plot(np.log10(distance),reconstructed,'-r',label='Slope')
+    #plt.plot(np.log10(distance), 1421*np.log10(distance)-2125, '-r',label='test')
+    #plt.plot(np.log10(distance), -2125*np.log10(distance)+1421, '-r',label='test')
     plt.legend()
     plt.xlabel('Distance')
     plt.ylabel('Velocity')
     plt.grid()
+    #plt.savefig('hubble.png')  
     plt.show()
 
 # Open csv file with flash data
-datapath = os.getcwd() + "\\data"
-flashdata = pd.read_csv(datapath + f'\\Flash_Data.csv', delimiter=',') 
-flash_velocity_data = []
+datapath = os.getcwd() + "/data"
+flashdata = pd.read_csv(datapath + f'/Flash_Data.csv', delimiter=',') 
+flash_velocity_df = pd.DataFrame(columns=['Flash_name','Radial_velocity','Galaxy_name','Galaxy_X','Galaxy_Y','Photon_count', 'Direction', 'Distance'])
+#dist_list = []
+d= 1778#0.00018073525133440103# From variable_stars.py (= dist to galaxy with largest x-ray)
+max_xRay_photoncount=20089120
 # For each flash
 for flash in flashdata.values:
     photon_count = flash[4]
     # Save the coordinates
     x = flash[2]
     y = flash[3]
-    #print(f"1: {np.power(d,2)}")
-    #print(f"2: {flash[4]}")
-    #print(f"3: {np.sqrt(1/max_xRay_photoncount)}")
-    dist_list.append(np.sqrt(np.power(d,2)*flash[4])/max_xRay_photoncount)
+    #dist_list.append(np.sqrt((float(np.power(d,2))*flash[4])/max_xRay_photoncount))
 
     # Look at direction and open corresponding galaxy-csv file
     if flash[1] == 'Top':
@@ -70,15 +76,21 @@ for flash in flashdata.values:
             #print(f"Its y: {galaxy[2]}")
             #print(f"flash x: {x}")
             #print(f"flash y: {y}")
-    flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1]}
+    flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt((float(np.power(d,2))*flash[4])/max_xRay_photoncount)}
+    
+    
     #flash_velocity_df.append([flash[0], closest_galaxy_velocity, closest_galaxy_x, closest_galaxy_y, photon_count])
     flash_velocity_df.sort_values(by=['Photon_count'], inplace=True)
-    flash_velocity_df['Distance'] = dist_list
 
+
+
+# Dropping last n rows using drop
+flash_velocity_df.drop(flash_velocity_df.tail(9).index,inplace = True)
+print(flash_velocity_df)
 velocity = flash_velocity_df['Radial_velocity'].tolist()
 distance = flash_velocity_df['Distance'].tolist()
 #print(velocity)
-print(distance)
+#print(distance)
 plot_Hubble(velocity, distance)
 #print(flash_velocity_df)
 #print(len(flash_velocity_df))

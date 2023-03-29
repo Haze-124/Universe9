@@ -181,18 +181,20 @@ def find_dist_to_galaxy(variables, galaxyX, galaxyY, direction):
 
             v0, v1, v2 = np.log10(variables['BlueF'][i]), np.log10(variables['GreenF'][i]), np.log10(variables['RedF'][i]) 
             luminosity = v1 + 2*np.log10(1./variables['Parallax'][i])
-            brightness = 20089120 # photon count/flux
+            #luminosity = 10**(luminosity/2)
+            brightness = v2-v0 #20089120 # photon count/flux
+            #brightness = 10**(brightness)
             print(f"L = {luminosity}")
             print(f"b = {brightness}")
             dist = np.sqrt(abs(luminosity)/(4*np.pi*brightness)) # [distance units]
+            #dist = 10**(dist)
+            dist=1./variables['Parallax'][i]
 
     print(f"Closest variable star: {closest_variable_star}")
     print(f"star X: {closest_variable_starX}")
     print(f"star Y: {closest_variable_starY}")
 
     variables = variables.loc[(variables['Period']!=0) & (variables['Period']>15) & (variables['Period']<25)]
-    print('DISTANCE:')
-    print(dist)
     return dist
         
 
@@ -207,7 +209,7 @@ names, periods = loop_through_all_stars()
 #print(f"PERIODS = {periods}")
 all_stars, variables = PeriodLuminosity(names, periods)
 #plot_HR(all_stars, variables)
-#plot_zoom_in(2, variables)
+plot_zoom_in(2, variables)
 #find_dist_to_galaxy(variables, 22.3940, 13.1841, 'Top')
 dist = find_dist_to_galaxy(variables, -4.3630,9.2000, 'Right')
 # GALAXY NAME       EQUAT       POLAR           X           Y

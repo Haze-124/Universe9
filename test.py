@@ -117,7 +117,8 @@ def plot_Benchmark_and_Cluster(max_cluster):
     dist=max_cluster-max_benchmark
     print(f"dist = {dist}")
     #s = plt.scatter(colour,m1+np.log10(dist),color='C0')
-    s = plt.scatter(colour,m1-dist,color='C0')
+    #s = plt.scatter(colour,m1-dist,color='C0')
+    s = plt.scatter(colour,m1+6.5,color='C0')
     plt.ylabel('Log Flux 1')
     plt.xlabel('Log Flux 2 - Log Flux 0')
     plt.legend([h,s],['Benchmark','Cluster'])
@@ -132,16 +133,16 @@ def plot_Benchmark_and_Cluster(max_cluster):
     # Find its maximum value in log Flux 1 scale
 
 #plt.close('all')
-stars = load_data('Front')
+stars = load_data('Right')
 plot_all_star_positions()
 #centre = ( 0.6622, 0.2589) # Choose point to zoom in around
-centre = ( -4.3272, -1.0065) # Choose point to zoom in around
+centre = ( -4.3630, 9.2000) # Choose point to zoom in around
 zoom_in_distance=10
 galaxy = plot_zoom_in(centre, zoom_in_distance)
-#max_cluster = plot_HR_diagram(galaxy)
+max_cluster = plot_HR_diagram(galaxy)
 #plot_HR_diagram_for_nearby_stars() # includes all stars in the galaxy
-#dist_to_galaxy = plot_Benchmark_and_Cluster(max_cluster)
-#print(f"Distance to galaxy: {(int) (dist_to_galaxy)} pc")
+dist_to_galaxy = plot_Benchmark_and_Cluster(max_cluster)
+print(f"Distance to galaxy: {(int) (dist_to_galaxy)} pc")
 
 
 
