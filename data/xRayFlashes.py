@@ -23,9 +23,12 @@ def plot_Hubble(velocity, distance):
     plt.show()
 
 # Open csv file with flash data
-datapath = os.getcwd() + "\\data"
-flashdata = pd.read_csv(datapath + f'\\Flash_Data.csv', delimiter=',') 
-flash_velocity_data = []
+datapath = os.getcwd() + "/data"
+flashdata = pd.read_csv(datapath + f'/Flash_Data.csv', delimiter=',') 
+flash_velocity_df = pd.DataFrame(columns=['Flash_name','Radial_velocity','Galaxy_name','Galaxy_X','Galaxy_Y','Photon_count', 'Direction'])
+dist_list = []
+d= 0.00018073525133440103# From variable_stars.py (= dist to galaxy with largest x-ray)
+max_xRay_photoncount=20089120
 # For each flash
 for flash in flashdata.values:
     photon_count = flash[4]
