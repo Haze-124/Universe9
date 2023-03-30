@@ -85,8 +85,8 @@ for flash in flashdata.values:
     print(f"C: {float(max_xRay_photoncount)}")
     print(f"D: {(np.sqrt(((np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount)))}")
     np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
-    #flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt(2.165*(10**(33))/((4*np.pi*(1.9865*(10**(-16))*flash[4]))/0.051))*3.24077929*10**(-23)} #np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
-    flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))} #np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
+    flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt(2.165*(10**(33))/((4*np.pi*(1.9865*(10**(-16))*flash[4]))/0.051))*3.24077929*10**(-23)} #np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
+    #flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))} #np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
     
     
     #flash_velocity_df.append([flash[0], closest_galaxy_velocity, closest_galaxy_x, closest_galaxy_y, photon_count])
