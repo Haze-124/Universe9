@@ -39,9 +39,10 @@ def load_and_get_nyquist(fname):
     return time, flux
 
 def plot(time, flux):
-    plt.plot(time,flux,'.',markersize=16)
+    plt.plot(time,flux,'.',markersize=10)
     plt.xlabel('Time (h)')
-    plt.ylabel('Relative Flux')
+    plt.ylabel('Normalized Flux')
+    plt.savefig('normalizedFlux.png') 
     plt.show()
 
 def get_period_and_freqPlot(time, flux):
@@ -111,18 +112,24 @@ def plot_HR(all_stars, variables):
     variable_colour = v2-v0
     abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
 
-    s = plt.plot(colour,abs_mag,'.C0')
-    h = plt.plot(variable_colour,abs_mag_v,'.C2',marker='*',markersize=10)  
-    plt.legend([s, h],['Steady','Variable'])
-    plt.ylabel('Log Flux 1')
-    plt.xlabel('Log Flux 2 - Log Flux 0')
+    #s = plt.plot(colour,abs_mag,'.C0', label='Benchmark')
+    #h = plt.plot(variable_colour,abs_mag_v,'.C2',marker='*',markersize=8, legend='Variable Stars')  
+    
+    #plt.legend([s, h],['Steady','Variable'])
+    plt.plot(colour,abs_mag,'.C0', label='Benchmark')
+    plt.plot(variable_colour,abs_mag_v,'.C2',marker='*',markersize=8, label='Variable Stars')  
+    plt.legend()
+    plt.ylabel('Log($M_G$)')
+    plt.xlabel('Log($M_R$)- Log($M_B$)')
+    plt.savefig('variables_HR.png')
     plt.grid()
     plt.show()
 
     plt.plot(variables.Period,abs_mag_v,'.',color='C2')
-    plt.xlabel('Period (h)')
-    plt.ylabel('Log Flux')
+    plt.xlabel('Variable Period (h)')
+    plt.ylabel('Log($M_{G}$)')
     plt.grid()
+    plt.savefig('bothClasses.png') 
     plt.show()
 
 def plot_zoom_in(starClass, variables):
@@ -133,15 +140,17 @@ def plot_zoom_in(starClass, variables):
         v0, v1, v2 = np.log10(variables['BlueF']), np.log10(variables['GreenF']), np.log10(variables['RedF']) 
         abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
         plt.xlim([18,24])
-        plt.plot(variables.Period,abs_mag_v,'.',color='C2',label='Data')
+        plt.plot(variables.Period,abs_mag_v,'.',color='C2',label='Class A')
         A = np.vander(variables.Period,2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
         b, residuals, rank, s = np.linalg.lstsq(A,abs_mag_v)
         reconstructed = A @ b # @ is shorthand for matrix multiplication in python
         plt.plot(variables.Period,reconstructed,'-r',label='LS Estimation')
         plt.legend()
-        plt.xlabel('Period (h)')
-        plt.ylabel('Log Flux')
+        plt.xlabel('Variable Period (h)')
+        plt.ylabel('Log($M_G$)')
         plt.grid()
+        plt.savefig('zoomin1.png') 
+        print(f"k, m = {b}")
         plt.show()
 
     elif starClass == 2:
@@ -149,16 +158,20 @@ def plot_zoom_in(starClass, variables):
         v0, v1, v2 = np.log10(variables['BlueF']), np.log10(variables['GreenF']), np.log10(variables['RedF']) 
         abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
         plt.xlim([43,48])
-        plt.plot(variables.Period,abs_mag_v,'.',color='C2', label='Data')
+        plt.plot(variables.Period,abs_mag_v,'.',color='C2', label='Class B')
         A = np.vander(variables.Period,2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
         b, residuals, rank, s = np.linalg.lstsq(A,abs_mag_v)
         reconstructed = A @ b # @ is shorthand for matrix multiplication in python
         plt.plot(variables.Period,reconstructed,'-r',label='LS estimation')
         plt.legend()
-        plt.xlabel('Period (h)')
-        plt.ylabel('Log Flux')
+        plt.xlabel('Variable Period (h)')
+        plt.ylabel('Log($M_G$)')
         plt.grid()
+        plt.tight_layout()
+        plt.savefig('zoomin2.png') 
+        print(f"k, m = {b}")
         plt.show()
+        
     else:
         print("You didn't specify a star class. Input 1 or 2.")
 
@@ -201,16 +214,17 @@ def find_dist_to_galaxy(variables, galaxyX, galaxyY, direction):
 
 
 
-#time, flux = load_and_get_nyquist('BackS023442.csv')
+time, flux = load_and_get_nyquist('BackS023442.csv')
 #plot(time, flux)
 #get_period_and_freqPlot(time, flux)
 names, periods = loop_through_all_stars()
 #print(f"NAMES = {names}")
 #print(f"PERIODS = {periods}")
 all_stars, variables = PeriodLuminosity(names, periods)
-#plot_HR(all_stars, variables)
-plot_zoom_in(2, variables)
-#find_dist_to_galaxy(variables, 22.3940, 13.1841, 'Top')
+plot_HR(all_stars, variables)
+#plot_zoom_in(2, variables)
+#plot_zoom_in(1, variables)
+find_dist_to_galaxy(variables, 22.3940, 13.1841, 'Top')
 dist = find_dist_to_galaxy(variables, -4.3630,9.2000, 'Right')
 # GALAXY NAME       EQUAT       POLAR           X           Y
 # RightDG0412     264.4622      78.4979      -4.3630      9.2000

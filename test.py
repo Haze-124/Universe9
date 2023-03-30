@@ -28,13 +28,13 @@ def load_data(direction):
     print(stars.keys()) # this tells us what column names we have
     return stars
 
-def plot_all_star_positions():
+def plot_all_star_positions(stars):
     plt.scatter(stars.X,stars.Y)
     plt.xlabel('x (pix)')
     plt.ylabel('y (pix)')
     plt.show()
 
-def plot_zoom_in(centre, max_dist):
+def plot_zoom_in(centre, max_dist, stars):
     d = np.sqrt((stars.X-centre[0])** 2 + (stars.Y - centre[1])**2)
     galaxy = stars[d<max_dist] # filter to only close ones
     plt.scatter(galaxy.X,galaxy.Y,c=galaxy.RadialVelocity,cmap=mpl.cm.seismic) # let's overplot the radial velocities
@@ -79,8 +79,11 @@ def plot_HR_diagram_for_nearby_stars():
         except:
             pass
 
-    plt.ylabel('Log Flux 1')
-    plt.xlabel('Log Flux 2 - Log Flux 0')
+    #plt.ylabel('Log Flux 1')
+    #plt.xlabel('Log Flux 2 - Log Flux 0')
+    plt.ylabel('Log($M_1$)')
+    plt.xlabel('Log($M_2$) - Log($M_0$)')
+    plt.grid()
     plt.show()
     return all_stars
 
@@ -101,7 +104,7 @@ def plot_Benchmark_and_Cluster(max_cluster):
             dist = 1/thispar
             abs_mag = thism1 + 2*np.log10(dist) 
             mm = thispar>0.010 # only pick the ones with good signal-to-noise - 10 mas is ok 
-            h = plt.scatter(thiscolour[mm],abs_mag[mm],color='C1')
+            h = plt.scatter(thiscolour[mm],abs_mag[mm], 5,color='C1')
             if max(abs_mag[mm]) > max_benchmark:
                 max_benchmark = max(abs_mag[mm])
         except:
@@ -118,10 +121,12 @@ def plot_Benchmark_and_Cluster(max_cluster):
     print(f"dist = {dist}")
     #s = plt.scatter(colour,m1+np.log10(dist),color='C0')
     #s = plt.scatter(colour,m1-dist,color='C0')
-    s = plt.scatter(colour,m1+6.5,color='C0')
-    plt.ylabel('Log Flux 1')
-    plt.xlabel('Log Flux 2 - Log Flux 0')
-    plt.legend([h,s],['Benchmark','Cluster'])
+    s = plt.scatter(colour,m1+6.5, 5,color='C0')
+    plt.ylabel('Log($M_{G}$)')
+    plt.xlabel('Log($M_{R}$) - Log($M_{B}$)')
+    plt.legend([h,s],['Benchmark','RightDG0412']) # 'Cluster'
+    plt.grid()
+    plt.savefig('benchmark.png') 
     plt.show()
 
     return 10**abs(dist/2)
@@ -134,15 +139,15 @@ def plot_Benchmark_and_Cluster(max_cluster):
 
 #plt.close('all')
 stars = load_data('Right')
-plot_all_star_positions()
+#plot_all_star_positions(stars)
 #centre = ( 0.6622, 0.2589) # Choose point to zoom in around
 centre = ( -4.3630, 9.2000) # Choose point to zoom in around
 zoom_in_distance=10
-galaxy = plot_zoom_in(centre, zoom_in_distance)
+galaxy = plot_zoom_in(centre, zoom_in_distance, stars)
 max_cluster = plot_HR_diagram(galaxy)
 #plot_HR_diagram_for_nearby_stars() # includes all stars in the galaxy
 dist_to_galaxy = plot_Benchmark_and_Cluster(max_cluster)
-print(f"Distance to galaxy: {(int) (dist_to_galaxy)} pc")
+#print(f"Distance to galaxy: {(int) (dist_to_galaxy)} pc")
 
 
 

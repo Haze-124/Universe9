@@ -1,0 +1,15 @@
+0000000000000000000000000000000000000000 709290c4a9fcbb5be41794c86c5539907aa5643c alicarrob <aliciarobertsson401@gmail.com> 1677710067 +0100	clone: from https://github.com/JamesWHaze/Universe9.git
+709290c4a9fcbb5be41794c86c5539907aa5643c 3057952554e4ab955531ec4a0fa422950c525d2c alicarrob <aliciarobertsson401@gmail.com> 1677710164 +0100	commit: test
+3057952554e4ab955531ec4a0fa422950c525d2c 4fccd6c065db41394858240985c60c349ed861fd alicarrob <aliciarobertsson401@gmail.com> 1677716644 +0100	commit: Adding data files
+4fccd6c065db41394858240985c60c349ed861fd f032fd143fb869d4b6f213dbf04d8759ffade22d alicarrob <aliciarobertsson401@gmail.com> 1677721894 +0100	commit: Tutorial
+f032fd143fb869d4b6f213dbf04d8759ffade22d f33987dda93b2f03081d930ce61eb9c5e848f8ee alicarrob <aliciarobertsson401@gmail.com> 1678322221 +0100	commit: Un-cubing code
+f33987dda93b2f03081d930ce61eb9c5e848f8ee 24d204f89f2b5e074912effdfc6ebc013edded8e alicarrob <aliciarobertsson401@gmail.com> 1678322664 +0100	commit: Converted Galaxy Data file
+24d204f89f2b5e074912effdfc6ebc013edded8e 9e7d47ceb25297a4a22635970bca420c4cb6bdd4 alicarrob <aliciarobertsson401@gmail.com> 1679363835 +0100	commit: added some files
+9e7d47ceb25297a4a22635970bca420c4cb6bdd4 5b528f504f12097f048e13b121104f5d40a09b59 alicarrob <aliciarobertsson401@gmail.com> 1679364175 +0100	pull --tags origin main: Fast-forward
+5b528f504f12097f048e13b121104f5d40a09b59 f972a00682afabac5e706e55afe921dcff074cec alicarrob <aliciarobertsson401@gmail.com> 1679618428 +0100	commit: code for x-rays and variable stars
+f972a00682afabac5e706e55afe921dcff074cec a7a0f76d779bdcee9c05a7f615327fdc281e70a7 alicarrob <aliciarobertsson401@gmail.com> 1680060355 +0200	commit: Updated files
+a7a0f76d779bdcee9c05a7f615327fdc281e70a7 911752c8ecd0dbce614fca26a495cb4cf31f145b alicarrob <aliciarobertsson401@gmail.com> 1680061373 +0200	commit: test
+911752c8ecd0dbce614fca26a495cb4cf31f145b 78092eb8a464bf508960dce20df2cef38be4ce7e alicarrob <aliciarobertsson401@gmail.com> 1680061848 +0200	commit: copy of x-ray file
+78092eb8a464bf508960dce20df2cef38be4ce7e 1c7a266ea3a4eafc8c11fab657704f3b3de7cca3 alicarrob <aliciarobertsson401@gmail.com> 1680061869 +0200	pull --tags origin main: Merge made by the 'recursive' strategy.
+1c7a266ea3a4eafc8c11fab657704f3b3de7cca3 ccd3abe5fc04ae0ff0a379d4f85081a47d7636db alicarrob <aliciarobertsson401@gmail.com> 1680061901 +0200	commit: updated xray file
+ccd3abe5fc04ae0ff0a379d4f85081a47d7636db 8c0fcd67662490b04980c140addd9fe3c2c48216 alicarrob <aliciarobertsson401@gmail.com> 1680073181 +0200	commit: finding hubble better

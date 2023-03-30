@@ -10,20 +10,22 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot_Hubble(velocity, distance):
-    plt.xlim([0.8,1.4])
+    #plt.xlim([0.8,1.4])
     #velocity = [abs(v) for v in velocity]
+    #distance = [abs(d) for d in distance]
 
-    plt.plot(np.log10(distance),velocity,'.',color='C2', label='Data')
-    A = np.vander(np.log10(distance),2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
+    plt.plot(distance,velocity,'.',color='C2', label='Data')
+    A = np.vander(distance,2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
     b, residuals, rank, s = np.linalg.lstsq(A,velocity, rcond=None)
     reconstructed = A @ b # @ is shorthand for matrix multiplication in python
     print(f"b = {b}")
-    plt.plot(np.log10(distance),reconstructed,'-r',label='Slope')
+    plt.plot(distance,reconstructed,'-r',label='Slope')
     #plt.plot(np.log10(distance), 1421*np.log10(distance)-2125, '-r',label='test')
     #plt.plot(np.log10(distance), -2125*np.log10(distance)+1421, '-r',label='test')
     plt.legend()
-    plt.xlabel('Distance')
-    plt.ylabel('Velocity')
+    plt.xlabel('Distance [Mpc]')
+    plt.ylabel('Velocity [km/s]')
+    plt.savefig('hubble.png') 
     plt.grid()
     #plt.savefig('hubble.png')  
     plt.show()
@@ -33,8 +35,10 @@ datapath = os.getcwd() + "/data"
 flashdata = pd.read_csv(datapath + f'/Flash_Data.csv', delimiter=',') 
 flash_velocity_df = pd.DataFrame(columns=['Flash_name','Radial_velocity','Galaxy_name','Galaxy_X','Galaxy_Y','Photon_count', 'Direction', 'Distance'])
 #dist_list = []
-d= 1778#0.00018073525133440103# From variable_stars.py (= dist to galaxy with largest x-ray)
-max_xRay_photoncount=20089120
+#d= 1778#0.00018073525133440103# From variable_stars.py (= dist to galaxy with largest x-ray)
+#max_xRay_photoncount=20089120
+d=0.374630
+max_xRay_photoncount=331
 # For each flash
 for flash in flashdata.values:
     photon_count = flash[4]
@@ -76,7 +80,13 @@ for flash in flashdata.values:
             #print(f"Its y: {galaxy[2]}")
             #print(f"flash x: {x}")
             #print(f"flash y: {y}")
-    flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt((float(np.power(d,2))*flash[4])/max_xRay_photoncount)}
+    print(f"A: {float(np.power(d,2))}")
+    print(f"B: {float(flash[4])}")
+    print(f"C: {float(max_xRay_photoncount)}")
+    print(f"D: {(np.sqrt(((np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount)))}")
+    np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
+    #flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt(2.165*(10**(33))/((4*np.pi*(1.9865*(10**(-16))*flash[4]))/0.051))*3.24077929*10**(-23)} #np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
+    flash_velocity_df.loc[len(flash_velocity_df)] = {'Flash_name':flash[0],'Radial_velocity':closest_galaxy_velocity,'Galaxy_name':closest_galaxy_name,'Galaxy_X':closest_galaxy_x,'Galaxy_Y':closest_galaxy_y,'Photon_count':photon_count, 'Direction':flash[1], 'Distance':np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))} #np.sqrt((float(np.power(d,2))*float(flash[4]))/float(max_xRay_photoncount))
     
     
     #flash_velocity_df.append([flash[0], closest_galaxy_velocity, closest_galaxy_x, closest_galaxy_y, photon_count])
