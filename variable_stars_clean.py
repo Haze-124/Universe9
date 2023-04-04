@@ -5,12 +5,9 @@ import matplotlib.pyplot as plt
 import glob # this package lets you search for filenames
 from pathlib import Path
 import random
-
 from tqdm import tqdm # tqdm is a package that lets you make progress bars to see how a loop is going
-
 import os 
 from sklearn.metrics import pairwise_distances
-
 import pandas as pd # pandas is a popular library in industry for manipulating large data tables
 from astropy.timeseries import LombScargle
 
@@ -31,7 +28,6 @@ warnings.filterwarnings('ignore')
 def load_and_get_nyquist(fname):
     current_dir = os.getcwd()
     ddir = str(current_dir)+'\\data\\Variable_Star_Data\\'
-    #fname = 'BackS023442.csv' # put your filename here
     data = pd.read_csv(ddir+fname) # load in CSV data as a Pandas object
     print(data.keys()) # see what's in it
     time, flux = data.Time, data.NormalisedFlux # just extract the columns as variables
@@ -54,7 +50,7 @@ def get_period_for_MC(time, flux):
 
 def get_period_uncertainty(flux, time, stdTime, stdFlux):
     periodList = []
-    for _ in range(5):
+    for _ in range(10):
         flux2 = []
         time2 = []
         if random.randint(0, 9) <=4:
@@ -75,7 +71,6 @@ def get_uncertainty_for_luminositySlope(variables, starclass):
         abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
         dp=0.001 # Uncertainty for parallax [arcsec]
         abs_mag_v_uncertainty = np.log10(1/(variables.Parallax-dp))-np.log10(1/(variables.Parallax+dp))#2*np.log10(1./(variables.Parallax*0.001))
-        #abs_mag_v_uncertainty = 2*np.log10(1./(variables.Parallax*0.001))
         for _ in range(20):
             A = np.vander(variables.Period+random.uniform(-stdPeriod, +stdPeriod),2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
             b, residuals, rank, s = np.linalg.lstsq(A,abs_mag_v+random.uniform(-abs_mag_v_uncertainty, +abs_mag_v_uncertainty))
@@ -90,7 +85,6 @@ def get_uncertainty_for_luminositySlope(variables, starclass):
         abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
         dp=0.001 # Uncertainty for parallax [arcsec]
         abs_mag_v_uncertainty = np.log10(1/(variables.Parallax-dp))-np.log10(1/(variables.Parallax+dp))#2*np.log10(1./(variables.Parallax*0.001))
-        #abs_mag_v_uncertainty = 2*np.log10(1./(variables.Parallax*0.001))
         for _ in range(20):
             A = np.vander(variables.Period+random.uniform(-stdPeriod, +stdPeriod),2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
             b, residuals, rank, s = np.linalg.lstsq(A,abs_mag_v+random.uniform(-abs_mag_v_uncertainty, +abs_mag_v_uncertainty))
@@ -106,30 +100,23 @@ def get_period_and_freqPlot(time, flux):
     plt.plot(freqs,power)
     plt.xlabel('Frequency (c/h)')
     plt.ylabel('LS Power') # LS stands for Lomb-Scargle
-    plt.grid()
     plt.show()
 
 def loop_through_all_stars():
     current_dir = os.getcwd()
     ddir = str(current_dir)+'\\data\\Variable_Star_Data\\'
     fnames = glob.glob(ddir+'*.csv')
-    #print(fnames[:10])
     freqs = np.linspace(1/100,0.45,10000) # frequency grid shouldn't go higher than Nyquist limit
     
     periods = [] # start an empty list to hold the period 
     names = []
     periodUnc = []
-    #fig, axes = plt.subplots(3,4,figsize=(18,12))
-    #for fname, ax in zip(fnames[:12], axes.ravel()): # you can loop over two things
     for fname in tqdm(fnames): # tqdm is a package that gives you a progress bar - neat! 
         data = pd.read_csv(fname) # load in CSV data as a Pandas object
         time, flux = data.Time, data.NormalisedFlux # just extract the columns as variables
         LS = LombScargle(time,flux) # initialize a Lomb-Scargle
         power = LS.power(freqs) # calculate LS power 
         bestfreq = freqs[np.argmax(power)] # which frequency has the highest Lomb-Scargle power?
-        #pred = LS.model(time,bestfreq) # make a sine wave prediction at the best frequency
-        #ax.plot(time,flux,'.')
-        #ax.plot(time,pred) # plot the model over the data
         periods.append(1/bestfreq) # add each period to the list
         names.append(Path(fname).stem)
         periodUnc.append(get_period_uncertainty(flux, time, 0.3, 0.015))
@@ -170,17 +157,14 @@ def plot_HR(all_stars, variables):
     variable_colour = v2-v0
     abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
 
-    #s = plt.plot(colour,abs_mag,'.C0', label='Benchmark')
-    #h = plt.plot(variable_colour,abs_mag_v,'.C2',marker='*',markersize=8, legend='Variable Stars')  
-    
-    #plt.legend([s, h],['Steady','Variable'])
     plt.plot(colour,abs_mag,'.C0', label='Benchmark')
     plt.plot(variable_colour,abs_mag_v,'.C2',marker='*',markersize=8, label='Variable Stars')  
     plt.legend()
     plt.ylabel('Log($M_G$)')
     plt.xlabel('Log($M_R$)- Log($M_B$)')
-    plt.savefig('variables_HR.png')
     plt.grid()
+    plt.savefig('variables_HR.png')
+    
     plt.show()
 
     plt.plot(variables.Period,abs_mag_v,'.',color='C2')
@@ -191,28 +175,8 @@ def plot_HR(all_stars, variables):
     plt.show()
 
 def plot_zoom_in(starClass, variables):
-    #print(variables.head())
 
     if starClass == 1:
-        """
-        variables = variables.loc[(variables['Period']!=0) & (variables['Period']>15) & (variables['Period']<25)]
-        v0, v1, v2 = np.log10(variables['BlueF']), np.log10(variables['GreenF']), np.log10(variables['RedF']) 
-        abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
-        plt.xlim([18,24])
-        plt.plot(variables.Period,abs_mag_v,'.',color='C2',label='Class A')
-        A = np.vander(variables.Period,2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
-        b, residuals, rank, s = np.linalg.lstsq(A,abs_mag_v)
-        reconstructed = A @ b # @ is shorthand for matrix multiplication in python
-        plt.plot(variables.Period,reconstructed,'-r',label='LS Estimation')
-        plt.legend()
-        plt.xlabel('Variable Period (h)')
-        plt.ylabel('Log($M_G$)')
-        plt.grid()
-        plt.savefig('zoomin1.png') 
-        print("Class A: ")
-        print(f"k, m = {b}")
-        plt.show()"""
-
         variables = variables.loc[(variables['Period']!=0) & (variables['Period']>15) & (variables['Period']<25)]
         v0, v1, v2 = np.log10(variables['BlueF']), np.log10(variables['GreenF']), np.log10(variables['RedF']) 
         abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
@@ -234,32 +198,11 @@ def plot_zoom_in(starClass, variables):
         ax.set_ylabel('Log($M_G$)')
         plt.gca().legend(('LS Estimation','Class A Data'))
         plt.grid()
-        #ax.legend()
         plt.savefig('zoomin1.png') 
         plt.show()
 
 
     elif starClass == 2:
-        """
-        variables = variables.loc[(variables['Period']!=0) & (variables['Period']>40) & (variables['Period']<50)]
-        v0, v1, v2 = np.log10(variables['BlueF']), np.log10(variables['GreenF']), np.log10(variables['RedF']) 
-        abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
-        plt.xlim([43,48])
-        plt.plot(variables.Period,abs_mag_v,'.',color='C2', label='Class B')
-        A = np.vander(variables.Period,2) # the Vandermonde matrix of order N is the matrix of polynomials of an input vector 1, x, x**2, etc
-        b, residuals, rank, s = np.linalg.lstsq(A,abs_mag_v)
-        reconstructed = A @ b # @ is shorthand for matrix multiplication in python
-        plt.plot(variables.Period,reconstructed,'-r',label='LS estimation')
-        plt.legend()
-        plt.xlabel('Variable Period (h)')
-        plt.ylabel('Log($M_G$)')
-        plt.grid()
-        plt.tight_layout()
-        plt.savefig('zoomin2.png') 
-        print('')
-        print('Class B')
-        print(f"k, m = {b}")
-        plt.show()"""
         variables = variables.loc[(variables['Period']!=0) & (variables['Period']>40) & (variables['Period']<50)]
         v0, v1, v2 = np.log10(variables['BlueF']), np.log10(variables['GreenF']), np.log10(variables['RedF']) 
         abs_mag_v = v1 + 2*np.log10(1./variables.Parallax)
@@ -280,8 +223,8 @@ def plot_zoom_in(starClass, variables):
         ax.set_ylabel('Log($M_G$)')
         plt.gca().legend(('LS Estimation','Class B Data'))
         plt.grid()
-        #ax.legend()
         plt.savefig('zoomin2.png') 
+    
         plt.show()
         
     else:
@@ -297,7 +240,6 @@ def find_dist_to_galaxy(variables, galaxyX, galaxyY, direction):
     
     ## Go through all variable stars
     for i, var in enumerate(variables.values):
-        #print(f"d = {1./variables['Parallax'][i]}")
         ## If the distance between the variable star and the galaxy (and looking in correct direction) is the smallest one yet
         if (np.sqrt(np.power((var[1]-galaxyX), 2)+np.power((var[2]-galaxyY), 2)) < min_dist) & (direction in bytes.decode(var[0], 'utf-8')):
             ## Set this as new minimum distance
@@ -307,31 +249,17 @@ def find_dist_to_galaxy(variables, galaxyX, galaxyY, direction):
             closest_variable_starY = var[2]
 
             v0, v1, v2 = np.log10(variables['BlueF'][i]), np.log10(variables['GreenF'][i]), np.log10(variables['RedF'][i]) 
-            ##luminosity = v1 + 2*np.log10(1./variables['Parallax'][i])
-            #luminosity = 10**(luminosity/2)
-            ##brightness = v2-v0 #20089120 # photon count/flux
-            #brightness = 10**(brightness)
-            #print(f"L = {luminosity}")
-            #print(f"b = {brightness}")
-            #dist = np.sqrt(abs(luminosity)/(4*np.pi*brightness)) # [distance units]
-            #dist = 10**(dist)
-            
+
             ## Open corresponding variable-star file
             current_dir = os.getcwd()
             ddir = str(current_dir)+'\\data\\Variable_Star_Data\\'
             flux_data = pd.read_csv(ddir+bytes.decode(var[0], 'utf-8')+'.csv') # load in CSV data as a Pandas object
-            ## Save Flux column and store it in the variables dataframe
-            #variables['NormalisedFlux'] = pd.Series(data_variable['NormalisedFlux'])
             var = np.append(var, flux_data['NormalisedFlux'])
             
             if var[9] < 30: # Class A
                 m=-0.09357367
                 c=-6.10646631
-                #print("class A")
-                #print(f"test dist = {1./variables['Parallax'][i]}")
                 dist = 10**((10**(m*var[9]+c))/2)
-                #dist=np.sqrt((10**((2*np.log10(1./variables['Parallax'][i]))/2))/((10**(v2-v0))*var[10]*4*np.pi))#1./variables['Parallax'][i]
-                #dist=np.sqrt((10**((m*var[9]+c)/2))/(var[10]*4*np.pi))#1./variables['Parallax'][i]
             else: # Class B
                 print("class B")
                 m=-0.06474778
@@ -351,25 +279,24 @@ def find_dist_to_galaxy(variables, galaxyX, galaxyY, direction):
 
 
 
-
+## RUN FUNCTIONS HERE ##
 
 time, flux = load_and_get_nyquist('BackS023442.csv')
 #plot(time, flux)
 #get_period_and_freqPlot(time, flux)
 names, periods, periodUnc = loop_through_all_stars()
-
-#print(f"NAMES = {names}")
-#print(f"PERIODS = {periods}")
 #get_period_uncertainty(time, flux, 0.3, 0.015)
 all_stars, variables = PeriodLuminosity(names, periods, periodUnc)
-#print(f"VARIABLESS = {variables.head()}")
-##plot_HR(all_stars, variables)
-##plot_zoom_in(1, variables)
-##plot_zoom_in(2, variables)
+plot_HR(all_stars, variables)
+plot_zoom_in(1, variables)
+plot_zoom_in(2, variables)
+
+## Fining uncertainty for m and c (y = mx + c) in periodLuminosity graph
 m1_std, c1_std = get_uncertainty_for_luminositySlope(variables, 1)
 print(f"class A: std(m) = {m1_std}, std(c) = {c1_std}")
 m2_std, c2_std = get_uncertainty_for_luminositySlope(variables, 2)
 print(f"class B: std(m) = {m2_std}, std(c) = {c2_std}")
+
 #find_dist_to_galaxy(variables, 22.3940, 13.1841, 'Top')
 #dist = find_dist_to_galaxy(variables, -4.3630,9.2000, 'Right')
 # GALAXY NAME       EQUAT       POLAR           X           Y
